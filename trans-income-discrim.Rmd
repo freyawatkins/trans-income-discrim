@@ -1,0 +1,173 @@
+---
+title: "Trans Household Income & Discrimination Settings"
+author: "Freya Watkins"
+date: "2022-12-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setup
+Load libraries:
+```{r}
+library(tidyverse) # data wrangling
+```
+
+Set up plot theme:
+```{r}
+# add 
+plot_cosmetics <- theme_classic() +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        #plot.title.position = "plot",
+        plot.title = element_text(size = 16, face = "bold"),
+        axis.text.x = element_text(size = 12, face = "bold"),
+        axis.text.y = element_text(size = 12, face = "bold"),
+        axis.title.x = element_text(face = 'bold', size = 16,
+                                    margin = margin(t = 15)),
+        axis.title.y = element_text(face = 'bold', size = 16,
+                                    margin = margin(r = 15)),
+        legend.title = element_text(face = 'bold', size = 14),
+        legend.text = element_text(size = 12),
+        legend.justification = "top")
+```
+
+# H20
+
+Read in H20 data:
+```{r}
+h20 <- read_csv("h20.csv")
+```
+
+Pivot data to long format:
+```{r}
+h20 <- h20 %>% tidyr::pivot_longer(cols = c(`Dont know`:`Very easily`),
+                            names_to = "Response")
+```
+
+Relevel Response factor:
+```{r}
+h20$Response <- factor(h20$Response, levels = c("With great difficulty", "With difficulty",
+                                                "With some difficulty", 
+                                                "Very easily",
+                                                "Easily",
+                                                "Fairly easily",
+                                                "Prefer not to say", "Dont know"))
+```
+
+Relevel Group factor with labels:
+```{r}
+h20$Group <- factor(h20$Group, levels = c("Baseline", "Trans_gender_queer_and_nonbinary",
+                                                "Trans", 
+                                                "Trans_not_heterosexual",
+                                                "Trans_masculine",
+                                                "Trans_feminine",
+                                                "Trans_intersex",
+                                                "Trans_plus_EMM",
+                                                "Trans_disabled"),
+                    labels = c("Baseline", "Trans gender queer and nonbinary",
+                                                "Trans", 
+                                                "Trans not heterosexual",
+                                                "Trans masculine",
+                                                "Trans feminine",
+                                                "Trans intersex",
+                                                "Trans + ethnic minority migrant",
+                                                "Trans disabled"))
+```
+
+Create numeric response for divergent scale:
+```{r}
+# make Response numeric
+h20 <- h20 %>% mutate(Resp_num = as.numeric(Response))
+  
+# make the counts negative for those with 'negative' ratings (i.e. 1-3 on likert scale)
+h20 <- h20 %>% mutate(value_minus= case_when(grepl("1|2|3", Resp_num) ~ -value, 
+                                                        grepl("4|5|6|7|8", Resp_num) ~ value))
+```
+
+Plot:
+```{r}
+h20 %>% filter(Response != "Dont know" & Response != "Prefer not to say") %>% 
+  ggplot(aes(x=Group, y=value_minus, fill = Response)) +
+  geom_col(position = position_stack(reverse = F))  +
+  scale_fill_manual(values = c('#4575b4', '#91bfdb', '#e0f3f8', '#d73027', '#fc8d59', '#fee090')) +
+  coord_flip() +
+  scale_y_continuous(breaks = seq(-60, 60, by = 10)) +
+  labs(title = "(H20) Thinking of your household’s total income, is your household able to make ends meet?",
+       x = "Group", y = "Percentage (%)", fill = "Response" ) +
+  plot_cosmetics +
+  theme(legend.position = "top", legend.justification = "left") +
+  guides(fill = guide_legend(byrow=F))
+```
+
+Save the plot:
+```{r}
+ggsave("h20.png", plot=last_plot(), width = 12, height = 8)
+
+```
+
+
+
+## C1
+
+Read in C1 data:
+```{r}
+c1 <- read_csv("c1.csv")
+```
+
+
+```{r}
+c1 <- c1 %>% tidyr::pivot_longer(cols = c(`Looking for work`:`Showing ID`),
+                            names_to = "Response")
+```
+
+Relevel response factor:
+```{r}
+c1$Response <- factor(c1$Response, levels = c("Looking for work", "At work",
+                                              "Looking for housing",
+                                              "Healthcare or social services",
+                                              "School", "Cafe, restaurant, bar", 
+                                              "Shop", "Showing ID"))
+```
+
+Relevel Group factor with labels:
+```{r}
+c1$Group <- factor(c1$Group, levels = c("Baseline", "Trans_gender_queer_and_nonbinary",
+                                                "Trans", 
+                                                "Trans_not_heterosexual",
+                                                "Trans_masculine",
+                                                "Trans_feminine",
+                                                "Trans_intersex",
+                                                "Trans_plus_EMM",
+                                                "Trans_disabled"),
+                    labels = c("Baseline", "Trans genderqueer and nonbinary",
+                                                "Trans", 
+                                                "Trans not heterosexual",
+                                                "Trans masculine",
+                                                "Trans feminine",
+                                                "Trans intersex",
+                                                "Trans + ethnic minority migrant",
+                                                "Trans disabled"))
+```
+
+Plot:
+```{r}
+c1 %>% ggplot(aes(x= fct_reorder(Response, value), y=value, fill = fct_reorder(Response, value))) +
+  geom_col(stat="identity", position = position_dodge()) +
+  coord_flip() +
+  facet_wrap(~Group, labeller=label_value) +
+  scale_fill_manual(values = c('#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf')) +
+  labs(title = "(C1) During the last 12 months, have you personally felt discriminated against because of being [RESPONDENT\nCATEGORY] in any of the following situations:  For each situation select whether you felt discriminated or not.\nIf you haven’t been in some situation in the last 12 months, please select ‘haven’t done this’",
+       x = NULL, y = "% of group responding 'Yes'", fill = "Situation") +
+  plot_cosmetics +
+  scale_x_discrete(labels = NULL, breaks = NULL) +
+  guides(fill = guide_legend(reverse = TRUE)) +
+  theme(legend.position = "right", legend.justification = "right")
+```
+
+Save plot:
+```{r}
+ggsave("c1.png", plot=last_plot(), width = 12, height = 8)
+```

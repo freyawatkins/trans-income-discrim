@@ -1,0 +1,10 @@
+Group,Looking for work,At work,Looking for housing,Healthcare or social services,School,"Cafe, restaurant, bar",Shop,Showing ID
+Baseline,10.17,20.83,10.95,15.73,19.51,22.47,13.08,4.66
+Trans,31.79,34.42,20.83,34.43,33.47,30.72,28.29,25.82
+Trans_plus_EMM,34.26,41.08,33.23,41.12,38.31,36.78,31.41,33.31
+Trans_disabled,44.73,44.95,30.18,50.03,44.05,37.66,36.81,39.13
+Trans_intersex,31.48,34.95,21.45,34.75,34.36,31.5,28.94,25.5
+Trans_gender_queer_and_nonbinary,35.69,34.57,26.95,51.65,38.3,36.11,32.05,42.06
+Trans_masculine,25.01,34.69,18.11,30.45,33.2,29.87,27.97,18.78
+Trans_feminine,33.68,33.86,20.86,39.14,38.38,30.02,28.64,36.18
+Trans_not_heterosexual,43.03,36.35,26.48,38.16,30.35,33.84,30.77,31.31
