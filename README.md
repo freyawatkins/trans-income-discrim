@@ -1,6 +1,6 @@
 # trans-income-discrim
  
-Data analysis & visualisation for two questions from the [**2019 EU LGBTI II survey**(https://data.europa.eu/data/datasets/eu-lgbti-ii-survey-experiences-and-views-of-lesbian-gay-bisexual-transgender-and-intersex-lgbti-individuals?locale=en) - "Experiences and views of lesbian, gay, bisexual, transgender and intersex (LGBTI) individuals", focussing here on trans demographics
+Data analysis & visualisation for two questions from the [**2019 EU LGBTI II survey**](https://data.europa.eu/data/datasets/eu-lgbti-ii-survey-experiences-and-views-of-lesbian-gay-bisexual-transgender-and-intersex-lgbti-individuals?locale=en) - "Experiences and views of lesbian, gay, bisexual, transgender and intersex (LGBTI) individuals", focussing here on trans demographics
 
 (H20) - _"Thinking of your household’s total income, is your household able to make ends meet?"_  
 
