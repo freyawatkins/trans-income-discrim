@@ -1,15 +1,20 @@
 ---
 title: "Trans Household Income & Discrimination Settings"
 author: "Freya Watkins"
-date: "2022-12-04"
-output: html_document
+date: "2023-01-24"
+toc: true
+output: 
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Setup
+# Setup
+
 Load libraries:
 ```{r}
 library(tidyverse) # data wrangling
@@ -34,7 +39,9 @@ plot_cosmetics <- theme_classic() +
         legend.justification = "top")
 ```
 
-# H20
+# Questions
+
+## H20
 
 Read in H20 data:
 ```{r}
@@ -96,18 +103,20 @@ h20 %>% filter(Response != "Dont know" & Response != "Prefer not to say") %>%
   geom_col(position = position_stack(reverse = F))  +
   scale_fill_manual(values = c('#4575b4', '#91bfdb', '#e0f3f8', '#d73027', '#fc8d59', '#fee090')) +
   coord_flip() +
-  scale_y_continuous(breaks = seq(-60, 60, by = 10)) +
-  labs(title = "(H20) Thinking of your household's total income, is your household able to make ends meet?",
-       x = "Group", y = "Percentage (%)", fill = "Response" ) +
+  scale_y_continuous(breaks = seq(-60, 60, by = 10), 
+                     labels = c(60, 50, 40, 30, 20, 10, 0, 10, 20, 30, 40, 50, 60)) +
+  labs(title = "Making ends meet is harder for trans people",
+       x = "Group", y = "Percentage (%)", fill = "Response",
+       caption = "Source: European Union FRA LGBTI II Survey, Baseline N: 139,799. Trans N: 20,933.\nQuestion H20: Thinking of your household's total income, is your household able to make ends meet?") +
   plot_cosmetics +
-  theme(legend.position = "top", legend.justification = "left", plot.title.position = "plot") +
+  theme(legend.position = "top", legend.justification = "left",
+        plot.title.position = "plot") +
   guides(fill = guide_legend(nrow=1, byrow=F))
 ```
 
 Save the plot:
 ```{r}
-ggsave("h20.png", plot=last_plot(), width = 12, height = 8)
-
+ggsave("plots/h20.png", plot=last_plot(), width = 12, height = 8)
 ```
 
 
@@ -116,7 +125,7 @@ ggsave("h20.png", plot=last_plot(), width = 12, height = 8)
 
 Read in C1 data:
 ```{r}
-c1 <- read_csv("c1.csv")
+c1 <- read_csv("data/c1.csv")
 ```
 
 
@@ -158,11 +167,13 @@ Plot:
 ```{r}
 c1 %>% ggplot(aes(x= fct_reorder(Response, value), y=value, fill = fct_reorder(Response, value))) +
   geom_col(stat="identity", position = position_dodge()) +
-  coord_flip() +
-  facet_wrap(~Group, labeller=label_value) +
+    facet_wrap(~Group, labeller=label_value) +
   scale_fill_manual(values = c('#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf')) +
-  labs(title = "(C1) During the last 12 months, have you personally felt discriminated against because of being [RESPONDENT\nCATEGORY] in any of the following situations:  For each situation select whether you felt discriminated or not.\nIf you haven’t been in some situation in the last 12 months, please select ‘haven’t done this’",
-       x = NULL, y = "% of group responding 'Yes'", fill = "Situation") +
+  labs(title = "Trans people experience discrimination more frequently in everyday situations",
+       x = NULL, y = "% of group responding 'Yes'", fill = "Situation",
+       caption = "Source: European Union FRA LGBTI II Survey, Baseline N: 139,799. Trans N: 20,933.\nQuestion C1: During the last 12 months, have you personally felt discriminated against because of being [RESPONDENT\nCATEGORY] in any of the following situations:  For each situation select whether you felt discriminated or not.\nIf you haven't been in some situation in the last 12 months, please select 'I haven't done this'") +
+  coord_cartesian(xlim = c(0, 50)) +
+  coord_flip() +
   plot_cosmetics +
   scale_x_discrete(labels = NULL, breaks = NULL) +
   guides(fill = guide_legend(reverse = TRUE)) +
@@ -171,5 +182,5 @@ c1 %>% ggplot(aes(x= fct_reorder(Response, value), y=value, fill = fct_reorder(R
 
 Save plot:
 ```{r}
-ggsave("c1.png", plot=last_plot(), width = 12, height = 8)
+ggsave("plots/c1.png", plot=last_plot(), width = 12, height = 8)
 ```
